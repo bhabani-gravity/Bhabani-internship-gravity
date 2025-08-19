@@ -1,35 +1,36 @@
 package com.bhabani.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.bhabani.entity.ProductEntity;
+import com.bhabani.repository.ProductRepository;
 
 @Service
 public class ProductServiceImpl implements ProductService{
 
-	List<ProductEntity> productList=new ArrayList<>();
+	@Autowired
+	private ProductRepository productRepo;
 	
 	@Override
 	public String addProduct(ProductEntity productEntity) {
-		try {
-			productList.add(productEntity);
-			return "Product added successfully";
-		} catch (Exception e) {
-			return "Product not added ";
-		}		
+		ProductEntity prodEntity = productRepo.save(productEntity);	
+		if (prodEntity!=null) {
+			return "product added successfully";
+		}
+		return "Failed to save the product";
 	}
 
 	@Override
 	public ProductEntity getProductById(Integer productId) {
 		
-		Optional<ProductEntity> optProduct = productList.stream().filter(product->product.getProductId().equals(productId)).findFirst();
-		if (optProduct.isPresent()) {
-			return optProduct.get();
+		Optional<ProductEntity> optProd = productRepo.findById(productId);
+		if (optProd.isPresent()) {
+			return optProd.get();			
 		}
 		return null;
 		
@@ -37,33 +38,29 @@ public class ProductServiceImpl implements ProductService{
 
 	@Override
 	public List<ProductEntity> getAllProduct() {
-		return productList;
+		return productRepo.findAll();
 	}
 
 	@Override
 	public String updateProduct(Integer productId,ProductEntity productEntity) {
-		Optional<ProductEntity> optProduct = productList.stream().filter(product->product.getProductId().equals(productId)).findFirst();
-		if (optProduct.isPresent()) {
-			 ProductEntity existingProduct = optProduct.get();
-			 BeanUtils.copyProperties(productEntity, existingProduct);
-			 try {
-				 productList.set(productId-1, productEntity);
-				 return "product updation successful";
-			} catch (Exception e) {
-				return "Product updation failed";
-			}		
+		Optional<ProductEntity> optProd = productRepo.findById(productId);
+		if (optProd.isPresent()) {
+			ProductEntity existingProduct = optProd.get();
+			BeanUtils.copyProperties(productEntity, existingProduct);
+			productRepo.save(existingProduct);
+			return "Product updation successful";
 		}
-		return "Product Not found";
+		return "Failed to update Product";
 	}
 
 	@Override
 	public String deleteProduct(Integer productId) {
-		Optional<ProductEntity> optProduct = productList.stream().filter(product->product.getProductId().equals(productId)).findFirst();
-		if (optProduct.isPresent()) {
-			productList.remove(optProduct.get());
-			return "Product deleted successfully";		
+		boolean status = productRepo.existsById(productId);
+		if (status) {
+			productRepo.deleteById(productId);
+			return "Product deleted successfuly";
 		}
-		return "Product not found";
+		return "Failed to deleted Product ";
 	}
 
 }
