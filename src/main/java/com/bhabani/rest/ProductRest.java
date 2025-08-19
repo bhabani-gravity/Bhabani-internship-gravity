@@ -1,0 +1,51 @@
+package com.bhabani.rest;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.bhabani.entity.ProductEntity;
+import com.bhabani.service.ProductService;
+
+@RestController
+@RequestMapping("/api/product")
+public class ProductRest {
+	
+	@Autowired
+	private ProductService productService;
+	
+	@PostMapping("/save")
+	public String saveProduct(@RequestBody ProductEntity productEntity) {
+		return productService.addProduct(productEntity);
+	}
+	
+	@GetMapping("/find/{productId}")
+	public ProductEntity getProductById(@PathVariable Integer productId) {
+		return productService.getProductById(productId);
+	}
+	
+	@GetMapping("/findAll")
+	public List<ProductEntity> getAllProducts() {
+		return productService.getAllProduct();
+	}
+	
+	@PutMapping("/update/{productId}")
+	public String updateProducts(@PathVariable Integer productId,
+								@RequestBody ProductEntity productEntity) {
+		return productService.updateProduct(productId, productEntity);
+	}
+	
+	@DeleteMapping("/delete/{productId}")
+	public String deleteProduct(@PathVariable Integer productId) {
+		return productService.deleteProduct(productId);
+	}
+	
+}
