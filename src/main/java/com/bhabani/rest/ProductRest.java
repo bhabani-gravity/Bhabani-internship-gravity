@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bhabani.entity.ProductEntity;
 import com.bhabani.service.ProductService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/product")
 public class ProductRest {
@@ -23,7 +25,7 @@ public class ProductRest {
 	private ProductService productService;
 	
 	@PostMapping("/save")
-	public String saveProduct(@RequestBody ProductEntity productEntity) {
+	public String saveProduct(@Valid @RequestBody ProductEntity productEntity) {
 		return productService.addProduct(productEntity);
 	}
 	
@@ -39,7 +41,7 @@ public class ProductRest {
 	
 	@PutMapping("/update/{productId}")
 	public String updateProducts(@PathVariable Integer productId,
-								@RequestBody ProductEntity productEntity) {
+								@Valid @RequestBody ProductEntity productEntity) {
 		return productService.updateProduct(productId, productEntity);
 	}
 	

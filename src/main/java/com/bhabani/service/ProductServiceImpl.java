@@ -18,6 +18,9 @@ public class ProductServiceImpl implements ProductService{
 	
 	@Override
 	public String addProduct(ProductEntity productEntity) {
+		if (productRepo.existsById(productEntity.getProductId())) {
+			return "Product id already exist . Could not save the product";
+		}
 		ProductEntity prodEntity = productRepo.save(productEntity);	
 		if (prodEntity!=null) {
 			return "product added successfully";
