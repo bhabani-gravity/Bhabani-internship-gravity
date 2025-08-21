@@ -5,6 +5,10 @@ import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.bhabani.entity.ProductEntity;
@@ -61,6 +65,13 @@ public class ProductServiceImpl implements ProductService{
 			return "Product deleted successfuly";
 		}
 		return "Failed to deleted Product ";
+	}
+
+	@Override
+	public Page<ProductEntity> getProducts(Integer page, Integer size, String sortField, String direction) {
+		Sort sort=direction.equalsIgnoreCase("desc")?Sort.by(sortField).descending():Sort.by(sortField).ascending();
+		Pageable pageable = PageRequest.of(page, size,sort);
+		return productRepo.findAll(pageable);
 	}
 
 }
