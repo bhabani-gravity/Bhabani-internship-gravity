@@ -11,12 +11,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.bhabani.dto.ProductRequestDto;
+import com.bhabani.dto.ProductResponseDto;
 import com.bhabani.entity.ProductEntity;
 import com.bhabani.mapper.ProductMapper;
 import com.bhabani.exceptions.FailedToSaveProductException;
 import com.bhabani.exceptions.ProductNotFoundException;
 import com.bhabani.repository.ProductRepository;
-import com.bhabani.response.ProductResponse;
 
 @Service
 public class ProductServiceImpl implements ProductService{
@@ -28,8 +29,8 @@ public class ProductServiceImpl implements ProductService{
 	private ProductMapper prodMapper;
 	
 	@Override
-	public String addProduct(ProductResponse productResponse) {
-		ProductEntity productEntity = prodMapper.toProductEntity(productResponse);
+	public String addProduct(ProductRequestDto productRequestDto) {
+		ProductEntity productEntity = prodMapper.toProductEntity(productRequestDto);
 		ProductEntity prodEntity = productRepo.save(productEntity);	
 		if (prodEntity!=null) {
 			return "product added successfully";
@@ -38,27 +39,28 @@ public class ProductServiceImpl implements ProductService{
 	}
 
 	@Override
-	public ProductEntity getProductById(Integer productId) {
+	public ProductResponseDto getProductById(Integer productId) {
 		
 		Optional<ProductEntity> optProd = productRepo.findById(productId);
 		if (optProd.isPresent()) {
-			return optProd.get();			
+			ProductEntity productEntity= optProd.get();	
+			return prodMapper.toProductResponseDto(productEntity);
 		}
 		throw new ProductNotFoundException("Product not found");
 		
 	}
 
 	@Override
-	public List<ProductResponse> getAllProduct() {
+	public List<ProductResponseDto> getAllProduct() {
 		return prodMapper.toListOfProductResponse(productRepo.findAll());
 	}
 
 	@Override
-	public String updateProduct(Integer productId,ProductResponse productResponse) {
+	public String updateProduct(Integer productId,ProductRequestDto productRequestDto) {
 		Optional<ProductEntity> optProd = productRepo.findById(productId);
 		if (optProd.isPresent()) {
 			ProductEntity existingProduct = optProd.get();
-			prodMapper.updateProductFromDto(productResponse, existingProduct);
+			prodMapper.updateProductFromDto(productRequestDto, existingProduct);
 			productRepo.save(existingProduct);
 			return "Product updation successful";
 		}
@@ -76,12 +78,12 @@ public class ProductServiceImpl implements ProductService{
 	}
 
 	@Override
-	public Page<ProductResponse> getProducts(Integer page, Integer size, String sortField, String direction) {
+	public Page<ProductResponseDto> getProducts(Integer page, Integer size, String sortField, String direction) {
 		Sort sort=direction.equalsIgnoreCase("desc")?Sort.by(sortField).descending():Sort.by(sortField).ascending();
 		Pageable pageable = PageRequest.of(page, size,sort);
 		 Page<ProductEntity> productEntityPage = productRepo.findAll(pageable);
 		 List<ProductEntity> content = productEntityPage.getContent();
-		 List<ProductResponse> listOfProductResponse = prodMapper.toListOfProductResponse(content);
+		 List<ProductResponseDto> listOfProductResponse = prodMapper.toListOfProductResponse(content);
 		 return  new PageImpl<>(listOfProductResponse, pageable, productEntityPage.getTotalElements());
 		 
 	}

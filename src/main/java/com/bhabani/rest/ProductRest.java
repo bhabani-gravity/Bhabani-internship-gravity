@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bhabani.entity.ProductEntity;
-import com.bhabani.response.ProductResponse;
+import com.bhabani.dto.ProductRequestDto;
+import com.bhabani.dto.ProductResponseDto;
 import com.bhabani.service.ProductService;
 
 import jakarta.validation.Valid;
@@ -28,24 +28,24 @@ public class ProductRest {
 	private ProductService productService;
 	
 	@PostMapping("/save")
-	public String saveProduct(@Valid @RequestBody ProductResponse productResponse) {
-		return productService.addProduct(productResponse);
+	public String saveProduct(@Valid @RequestBody ProductRequestDto productRequestDto) {
+		return productService.addProduct(productRequestDto);
 	}
 	
 	@GetMapping("/find/{productId}")
-	public ProductEntity getProductById(@PathVariable Integer productId) {
+	public ProductResponseDto getProductById(@PathVariable Integer productId) {
 		return productService.getProductById(productId);
 	}
 	
 	@GetMapping("/findAll")
-	public List<ProductResponse> getAllProducts() {
+	public List<ProductResponseDto> getAllProducts() {
 		return productService.getAllProduct();
 	}
 	
 	@PutMapping("/update/{productId}")
 	public String updateProducts(@PathVariable Integer productId,
-								@Valid @RequestBody ProductResponse productResponse) {
-		return productService.updateProduct(productId, productResponse);
+								@Valid @RequestBody ProductRequestDto productRequestDto) {
+		return productService.updateProduct(productId, productRequestDto);
 	}
 	
 	@DeleteMapping("/delete/{productId}")
@@ -54,7 +54,7 @@ public class ProductRest {
 	}
 	
 	@GetMapping("/page")
-	public Page<ProductResponse> getProducts(
+	public Page<ProductResponseDto> getProducts(
 											@RequestParam (defaultValue = "0") Integer page,
 											@RequestParam (defaultValue = "3") Integer size,
 											@RequestParam (defaultValue = "productId") String sortField,
