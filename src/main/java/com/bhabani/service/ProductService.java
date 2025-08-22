@@ -2,6 +2,8 @@ package com.bhabani.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+
 import com.bhabani.entity.ProductEntity;
 
 public interface ProductService {
@@ -10,4 +12,5 @@ public interface ProductService {
 	public List<ProductEntity> getAllProduct();
 	public String updateProduct(Integer productId,ProductEntity productEntity);
 	public String deleteProduct(Integer productId);
+	public Page<ProductEntity> getProducts(Integer page,Integer size,String sortField,String direction);
 }
