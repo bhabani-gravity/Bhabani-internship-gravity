@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.bhabani.entity.ProductEntity;
+import com.bhabani.exceptions.FailedToSaveProductException;
+import com.bhabani.exceptions.ProductNotFoundException;
 import com.bhabani.repository.ProductRepository;
 
 @Service
@@ -25,7 +27,7 @@ public class ProductServiceImpl implements ProductService{
 		if (prodEntity!=null) {
 			return "product added successfully";
 		}
-		return "Failed to save the product";
+		throw new FailedToSaveProductException("Failed to save product");
 	}
 
 	@Override
@@ -35,7 +37,7 @@ public class ProductServiceImpl implements ProductService{
 		if (optProd.isPresent()) {
 			return optProd.get();			
 		}
-		return null;
+		throw new ProductNotFoundException("Product not found");
 		
 	}
 
@@ -53,7 +55,7 @@ public class ProductServiceImpl implements ProductService{
 			productRepo.save(existingProduct);
 			return "Product updation successful";
 		}
-		return "Failed to update Product";
+		throw new ProductNotFoundException("Product not found, Can not perform Update Operation");
 	}
 
 	@Override
@@ -63,7 +65,7 @@ public class ProductServiceImpl implements ProductService{
 			productRepo.deleteById(productId);
 			return "Product deleted successfuly";
 		}
-		return "Failed to deleted Product ";
+		throw new ProductNotFoundException("Product not found, can not delete product");
 	}
 
 }
