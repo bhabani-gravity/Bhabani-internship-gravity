@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bhabani.entity.ProductEntity;
+import com.bhabani.response.ProductResponse;
 import com.bhabani.service.ProductService;
 
 import jakarta.validation.Valid;
@@ -25,8 +26,8 @@ public class ProductRest {
 	private ProductService productService;
 	
 	@PostMapping("/save")
-	public String saveProduct(@Valid @RequestBody ProductEntity productEntity) {
-		return productService.addProduct(productEntity);
+	public String saveProduct(@Valid @RequestBody ProductResponse productResponse) {
+		return productService.addProduct(productResponse);
 	}
 	
 	@GetMapping("/find/{productId}")
@@ -35,14 +36,14 @@ public class ProductRest {
 	}
 	
 	@GetMapping("/findAll")
-	public List<ProductEntity> getAllProducts() {
+	public List<ProductResponse> getAllProducts() {
 		return productService.getAllProduct();
 	}
 	
 	@PutMapping("/update/{productId}")
 	public String updateProducts(@PathVariable Integer productId,
-								@Valid @RequestBody ProductEntity productEntity) {
-		return productService.updateProduct(productId, productEntity);
+								@Valid @RequestBody ProductResponse productResponse) {
+		return productService.updateProduct(productId, productResponse);
 	}
 	
 	@DeleteMapping("/delete/{productId}")

@@ -3,11 +3,12 @@ package com.bhabani.service;
 import java.util.List;
 
 import com.bhabani.entity.ProductEntity;
+import com.bhabani.response.ProductResponse;
 
 public interface ProductService {
-	public String addProduct(ProductEntity productEntity);
+	public String addProduct(ProductResponse productResponse);
 	public ProductEntity getProductById(Integer productId);
-	public List<ProductEntity> getAllProduct();
-	public String updateProduct(Integer productId,ProductEntity productEntity);
+	public List<ProductResponse> getAllProduct();
+	public String updateProduct(Integer productId,ProductResponse productResponse);
 	public String deleteProduct(Integer productId);
 }
