@@ -4,13 +4,14 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 
-import com.bhabani.entity.ProductEntity;
+import com.bhabani.dto.ProductRequestDto;
+import com.bhabani.dto.ProductResponseDto;
 
 public interface ProductService {
-	public String addProduct(ProductEntity productEntity);
-	public ProductEntity getProductById(Integer productId);
-	public List<ProductEntity> getAllProduct();
-	public String updateProduct(Integer productId,ProductEntity productEntity);
+	public String addProduct(ProductRequestDto productRequest);
+	public ProductResponseDto getProductById(Integer productId);
+	public List<ProductResponseDto> getAllProduct();
+	public String updateProduct(Integer productId,ProductRequestDto productRequest);
 	public String deleteProduct(Integer productId);
-	public Page<ProductEntity> getProducts(Integer page,Integer size,String sortField,String direction);
+	public Page<ProductResponseDto> getProducts(Integer page,Integer size,String sortField,String direction);
 }
