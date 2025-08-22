@@ -3,12 +3,18 @@ package com.bhabani.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.bhabani.entity.ProductEntity;
 import com.bhabani.mapper.ProductMapper;
+import com.bhabani.exceptions.FailedToSaveProductException;
+import com.bhabani.exceptions.ProductNotFoundException;
 import com.bhabani.repository.ProductRepository;
 import com.bhabani.response.ProductResponse;
 
@@ -28,7 +34,7 @@ public class ProductServiceImpl implements ProductService{
 		if (prodEntity!=null) {
 			return "product added successfully";
 		}
-		return "Failed to save the product";
+		throw new FailedToSaveProductException("Failed to save product");
 	}
 
 	@Override
@@ -38,7 +44,7 @@ public class ProductServiceImpl implements ProductService{
 		if (optProd.isPresent()) {
 			return optProd.get();			
 		}
-		return null;
+		throw new ProductNotFoundException("Product not found");
 		
 	}
 
@@ -56,7 +62,7 @@ public class ProductServiceImpl implements ProductService{
 			productRepo.save(existingProduct);
 			return "Product updation successful";
 		}
-		return "Failed to update Product";
+		throw new ProductNotFoundException("Product not found, Can not perform Update Operation");
 	}
 
 	@Override
@@ -66,7 +72,18 @@ public class ProductServiceImpl implements ProductService{
 			productRepo.deleteById(productId);
 			return "Product deleted successfuly";
 		}
-		return "Failed to deleted Product ";
+		throw new ProductNotFoundException("Product not found, can not delete product");
+	}
+
+	@Override
+	public Page<ProductResponse> getProducts(Integer page, Integer size, String sortField, String direction) {
+		Sort sort=direction.equalsIgnoreCase("desc")?Sort.by(sortField).descending():Sort.by(sortField).ascending();
+		Pageable pageable = PageRequest.of(page, size,sort);
+		 Page<ProductEntity> productEntityPage = productRepo.findAll(pageable);
+		 List<ProductEntity> content = productEntityPage.getContent();
+		 List<ProductResponse> listOfProductResponse = prodMapper.toListOfProductResponse(content);
+		 return  new PageImpl<>(listOfProductResponse, pageable, productEntityPage.getTotalElements());
+		 
 	}
 
 }
